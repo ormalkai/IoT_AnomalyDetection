@@ -1,0 +1,6 @@
+--name=Simple_Home_1003_Security_Camera_Baseline
+--iots=Simple_Home_1003_Security_Camera
+--learning_rate=0.006
+--epochs=500
+--train
+--test

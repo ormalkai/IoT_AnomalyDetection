@@ -1,0 +1,6 @@
+--name=Damini_Doorbell_Baseline
+--iots=Damini_Doorbell
+--learning_rate=0.012
+--epochs=800
+--train
+--test
