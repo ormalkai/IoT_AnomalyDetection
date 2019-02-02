@@ -1,0 +1,15 @@
+--name=All
+--iots=Danmini_Doorbell
+--iots=Ecobee_Thermostat
+--iots=Ennio_Doorbell
+--iots=Philips_Baby_Monitor
+--iots=Provision_737_Security_Camera
+--iots=Provision_838_Security_Camera
+--iots=Samsung_Webcam
+--iots=Simple_Home_1002_Security_Camera
+--iots=Simple_Home_1003_Security_Camera
+--model_filename=All
+--learning_rate=0.012
+--epochs=800
+--train
+--test
