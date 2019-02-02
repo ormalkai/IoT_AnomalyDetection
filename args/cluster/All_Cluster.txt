@@ -1,4 +1,4 @@
---name=All
+--name=All_Cluster
 --iots=Danmini_Doorbell
 --iots=Ecobee_Thermostat
 --iots=Ennio_Doorbell
@@ -8,7 +8,7 @@
 --iots=Samsung_Webcam
 --iots=Simple_Home_1002_Security_Camera
 --iots=Simple_Home_1003_Security_Camera
---model_filename=All
+--model_filename=All_Cluster
 --learning_rate=0.012
 --epochs=800
 --train

@@ -1,5 +1,7 @@
---name=Danmini_Doorbell_Baseline
+--name=Danmini_Doorbell_Ennio_Doorbell_Cluster
 --iots=Danmini_Doorbell
+--iots=Ennio_Doorbell
+--model_filename=Danmini_Doorbell_Ennio_Doorbell_Cluster
 --learning_rate=0.012
 --epochs=800
 --train
