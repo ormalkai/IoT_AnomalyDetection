@@ -1,5 +1,5 @@
---name=Damini_Doorbell_Baseline
---iots=Damini_Doorbell
+--name=Danmini_Doorbell_Baseline
+--iots=Danmini_Doorbell
 --learning_rate=0.012
 --epochs=800
 --train

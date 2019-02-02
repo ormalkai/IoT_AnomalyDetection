@@ -1,6 +1,8 @@
 --name=Provision_737_Security_Camera_Baseline
 --iots=Provision_737_Security_Camera
+--model=LSTMEncDec
 --learning_rate=0.026
---epochs=300
+--epochs=200
+--seq_len=35
 --train
 --test

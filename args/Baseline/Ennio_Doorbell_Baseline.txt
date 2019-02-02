@@ -2,5 +2,6 @@
 --iots=Ennio_Doorbell
 --learning_rate=0.003
 --epochs=350
+--model_filename=Ennio_Doorbell_Baseline
 --train
 --test
