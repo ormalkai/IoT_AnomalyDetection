@@ -1,32 +1,107 @@
-from sklearn.model_selection import train_test_split
+from abc import ABC, abstractmethod
+from torch import nn, optim
+from torch.autograd import Variable
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
 
 
-class IoTAnomalyDetector:
-    def __init__(self, data, labels, net, learning_rate=0.01, epochs=1000, batch_size=128):
+class IoTAnomalyDetectorBase(ABC):
+    def __init__(self, data, net, seq_len, loss, optimizer, learning_rate, epochs, batch_size, train_val_split, normalize="min-max"):
+        """
+        TODO ORM doc
+        :param data:
+        :param net:
+        :param learning_rate:
+        :param epochs:
+        :param batch_size:
+        :param train_val_split:
+        """
+        self.seq_len = seq_len
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.batch_size = batch_size
         self.net = net
-        # shuffle and split train data
-        if labels is not None:
-            x_mat_train, x_mat_val, y_train, y_val = train_test_split(data, labels, test_size=0.2, random_state=42)
-        else:
-            x_mat_train, y_train, x_mat_val, y_val = data, None, None, None
-        self.x_mat_train = Variable(torch.cuda.FloatTensor(x_mat_train))
-        self.y_train = Variable(torch.cuda.FloatTensor(y_train))
-        self.x_mat_val = Variable(torch.cuda.FloatTensor(x_mat_val))
-        self.y_val = Variable(torch.cuda.FloatTensor(y_val))
-        self.loss = nn.MSELoss()
-        self.optimizer = optim.SGD(self.net.parameters(), self.learning_rate, nesterov=True, momentum=0.9)
+        if train_val_split <= 0 or train_val_split >= 1:
+            raise Exception("train_val_split must be in range (0, 1)")
+        x_mat_train = []
+        x_mat_val = []
+        for iot in data:
+            train_size = int(len(iot) * train_val_split)
+            iot_train = iot[:train_size]
+            iot_val = iot[train_size:]
+            x_mat_train.extend(iot_train)
+            x_mat_val.extend(iot_val)
+            if normalize == "norm":
+                self.scaler = StandardScaler(copy=False)
+            elif normalize == "min-max":
+                self.scaler = MinMaxScaler(copy=False)
+            else:
+                raise Exception("Unexpected argument normalize={}".format(normalize))
+            self.scaler.fit(iot_train)
+            self.scaler.transform(iot_train)
+            self.scaler.transform(iot_val)
 
-    def run_epoch(self, x_mat, y, is_train):
+        self.x_mat_train = np.asarray(x_mat_train)
+        self.y_train = np.asarray(x_mat_train)
+        self.x_mat_val = np.asarray(x_mat_val)
+        self.y_val = np.asarray(x_mat_val)
+
+        if loss == "MSE":
+            self.loss = nn.MSELoss()
+        else:
+            raise Exception("Unsupported loss {}".format(loss))
+        if optimizer == "SGD":
+            self.optimizer = optim.SGD(self.net.parameters(), self.learning_rate)
+        elif optimizer == "Adam":
+            self.optimizer = optim.Adam(self.net.parameters(), self.learning_rate)
+        else:
+            raise Exception("Unsupported optimizer {}".format(optim))
+
+    @staticmethod
+    def batch_generator(x_mat, y, batch_size, seq_len):
+        if seq_len == 1:
+            # Currently no permutation since the chronological order is important!
+            permutation = list(range(x_mat.size()[0]))
+            for i in range(0, x_mat.size()[0], batch_size):
+                indices = permutation[i:i + batch_size]
+                input_x = x_mat[indices]
+                expected_y = y[indices]
+                if torch.cuda.is_available():
+                    yield Variable(torch.cuda.FloatTensor(input_x)), Variable(torch.cuda.FloatTensor(expected_y))
+                else:
+                    yield Variable(torch.FloatTensor(input_x)), Variable(torch.FloatTensor(expected_y))
+        else:
+            mean_data_x = np.mean(x_mat, axis=0)
+            mean_data_y = np.mean(y, axis=0)
+            # pad the beginning of the data with mean rows in order to minimize the error
+            # on first rows while using sequence
+            prefix_padding_x = np.asarray([mean_data_x for _ in range(seq_len - 1)])
+            prefix_padding_y = np.asarray([mean_data_y for _ in range(seq_len - 1)])
+            padded_data_x = np.vstack((prefix_padding_x, x_mat))
+            padded_data_y = np.vstack((prefix_padding_y, y))
+            seq_data = [padded_data_x[:seq_len, :]]
+            seq_y = [padded_data_y[:seq_len, :]]
+            for i in range(1, len(padded_data_x) - seq_len):
+                seq_data.append(padded_data_x[i:i + seq_len, :])
+                seq_y.append(padded_data_y[i:i + seq_len, :])
+                if len(seq_data) == batch_size:
+                    if torch.cuda.is_available():
+                        yield Variable(torch.cuda.FloatTensor(seq_data)), Variable(torch.cuda.FloatTensor(seq_y))
+                    else:
+                        yield Variable(torch.FloatTensor(seq_data)), Variable(torch.FloatTensor(seq_y))
+                    seq_data = seq_data[1:]  # remove first element from batch
+                    seq_y = seq_y[1:]  # remove first element from batch
+
+    def run_epoch(self, x_mat, y, is_train, batch_size, seq_len):
         epoch_loss = 0.0
-        permutation = torch.randperm(x_mat.size()[0])
         # iterate over the data in batches
-        for i in range(0, x_mat.size()[0], self.batch_size):
-            indices = permutation[i:i + self.batch_size]
-            input_x = x_mat[indices]
-            expected_y = y[indices]
+        epoch_losses = []
+        epoch_outputs = []
+        if batch_size == -1:
+            batch_size = x_mat.size()[0]
+        for input_x, expected_y in IoTAnomalyDetectorBase.batch_generator(x_mat, y, batch_size, seq_len):
 
             # zero optimzer gradients
             # I n PyTorch, we need to set the gradients to zero before starting to do backpropragation because
@@ -36,7 +111,7 @@ class IoTAnomalyDetector:
             #
             # Because of this, when you start your training loop, ideally you should zero out the gradients so
             # that you do the parameter update correctly.
-            # Else the gradient would point in some other directi
+            # Else the gradient would point in some other direction
             if is_train:
                 self.net.train()
                 self.optimizer.zero_grad()
@@ -56,25 +131,76 @@ class IoTAnomalyDetector:
             # update statistics
             # loss.item() returns the scalar value of the loss
             # loss is averaged by batch size
+            epoch_losses.append(loss.item())  # for calculating tr* while running epoch with batch_size=1
             epoch_loss += input_x.size()[0] * loss.item()
-        return epoch_loss
+            epoch_outputs.extend(output.clone().detach().numpy())
+        return epoch_loss, epoch_losses, np.asarray(epoch_outputs)
 
     def fit(self):
+        self.net.train()
         train_loss_per_epoch = []
         val_loss_per_epoch = []
         for epoch in range(self.epochs):
-            train_running_loss = self.run_epoch(self.x_mat_train, self.y_train, is_train=True)
-            val_running_loss = self.run_epoch(self.x_mat_val, self.y_val, is_train=False)
+            train_running_loss, _, _ = self.run_epoch(self.x_mat_train, self.y_train, is_train=True,
+                                                      batch_size=self.batch_size, seq_len=self.seq_len)
+            val_running_loss, _, _ = self.run_epoch(self.x_mat_val, self.y_val, is_train=False,
+                                                    batch_size=self.batch_size, seq_len=self.seq_len)
 
             # print statistics
-            train_running_loss /= self.x_mat_train.shape[0]
-            val_running_loss /= self.x_mat_val.shape[0]
+            train_running_loss /= len(self.x_mat_train)
+            val_running_loss /= len(self.x_mat_val)
             if epoch % 50 == 0:
-                pass
-            #                 print("Epoch {}, train avg loss {:.6f}, val avg loss {:.6f}".format(epoch, train_running_loss, val_running_loss))
+                print("Epoch {}, train avg loss {:.6f}, val avg loss {:.6f}".format(epoch, train_running_loss, val_running_loss))
             train_loss_per_epoch.append(train_running_loss)
             val_loss_per_epoch.append(val_running_loss)
-        return train_loss_per_epoch, val_loss_per_epoch
+        # plot learning curve
+        # summarize history for loss
+        plt.plot(train_loss_per_epoch, linewidth=3)
+        plt.plot(val_loss_per_epoch, linewidth=3)
+        # plt.ylim(1e-3, 1e-2)
+        # plt.yscale("log")
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'val'], loc='upper right')
+        plt.show()
 
     def predict(self, x_mat):
-        return self.net.forward(Variable(torch.cuda.FloatTensor(x_mat))).cpu().data.numpy()
+        _, _, predictions = self.run_epoch(x_mat, x_mat, is_train=False, batch_size=self.batch_size,
+                                           seq_len=self.seq_len)
+        return predictions
+
+    # def predict(self, x_mat):
+    #     self.net.eval()
+    #     if torch.cuda.is_available():
+    #         x_mat = torch.cuda.FloatTensor(x_mat)
+    #     else:
+    #         x_mat = torch.FloatTensor(x_mat)
+    #     return self.net.forward(Variable(x_mat)).cpu().data.numpy()
+
+    def learn_benign_baseline(self, model_filename, is_train):
+        if is_train:
+            # train the model
+            self.fit()
+            self.net.save_model_to_file(model_filename)
+        else:
+            self.load_model_from_file(model_filename)
+        self._learn_post_training_parameters()
+
+    @abstractmethod
+    def _learn_post_training_parameters(self):
+        pass
+
+    @abstractmethod
+    def detect_anomalies(self, x_mat):
+        pass
+
+    def load_model_from_file(self, model_filename):
+        if model_filename is None:
+            raise Exception("Must train model or load pre-trained model")
+        print("Loading pre trained model from file {}".format(model_filename))
+        self.net.load_model_from_file(model_filename)
+
+    @abstractmethod
+    def get_post_training_parameters(self):
+        pass
