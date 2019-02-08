@@ -42,7 +42,8 @@ class NBaIoTDatasetLoader:
         df_benign_test = None
         if df_benign is not None:
             train_size = int(len(df_benign) * train_test_split)
-            df_benign_train = df_benign[:train_size]
+            # df_benign_train = df_benign[:train_size]
+            df_benign_train = df_benign[:500]
             df_benign_test = df_benign[train_size:]
         df_gafgyt_combo = pd.read_csv(data_dir + GAFGYT_COMBO_FILE).dropna().values if gafgyt else None
         df_gafgyt_junk = pd.read_csv(data_dir + GAFGYT_JUNK_FILE).dropna().values if gafgyt else None

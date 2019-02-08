@@ -23,6 +23,8 @@ class IoTAnomalyDetectorLSTMEncDecNetImp(nn.Module):
 
         # reconstruct last output using encoder_last_hidden_state
         predicted_outputs = torch.zeros(batch_size, max_len, self.encoder_input_size)
+        if torch.cuda.is_available():
+            predicted_outputs = torch.zeros(batch_size, max_len, self.encoder_input_size).to('cuda:0')
         predicted_outputs[:, -1, :] = self.sigmoid(self.linear(encoder_last_hidden_state))
         # we use encoder_last_hidden_state, encoder_last_cell_state as the initializer
         # to the the decoder too

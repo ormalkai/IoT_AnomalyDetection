@@ -5,9 +5,9 @@ import numpy as np
 
 
 class IoTAnomalyDetectorAutoEncoder(IoTAnomalyDetectorBase):
-    def __init__(self, data, seq_len, loss, optimizer, learning_rate, epochs, batch_size, train_val_split):
+    def __init__(self, data, seq_len, loss, optimizer, learning_rate, epochs, batch_size, train_val_split, is_cli):
         IoTAnomalyDetectorBase.__init__(self, data, IoTAnomalyDetectorAutoEncoderNet(), seq_len, loss, optimizer,
-                                        learning_rate, epochs, batch_size, train_val_split)
+                                        learning_rate, epochs, batch_size, train_val_split, is_cli)
         self.tr_star = None
         self.ws_star = None
 

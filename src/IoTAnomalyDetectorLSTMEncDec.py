@@ -4,9 +4,9 @@ from utils import *
 
 
 class IoTAnomalyDetectorLSTMEncDec(IoTAnomalyDetectorBase):
-    def __init__(self, data, seq_len, loss, optimizer, learning_rate, epochs, batch_size, train_val_split):
+    def __init__(self, data, seq_len, loss, optimizer, learning_rate, epochs, batch_size, train_val_split, is_cli):
         IoTAnomalyDetectorBase.__init__(self, data, IoTAnomalyDetectorLSTMEncDecNet(), seq_len, loss, optimizer,
-                                        learning_rate, epochs, batch_size, train_val_split)
+                                        learning_rate, epochs, batch_size, train_val_split, is_cli)
         self.tr_star = None
         self.seq_len = seq_len
 
@@ -54,7 +54,7 @@ class IoTAnomalyDetectorLSTMEncDec(IoTAnomalyDetectorBase):
 
         # is_anomaly of shape (seq_len, n_seq)
         is_anomaly = []
-        for i, seq in enumerate(self.seq_generator(self.x_mat_val)):
+        for i, seq in enumerate(self.seq_generator(x_mat)):
             is_anomaly.append(calc_mse(seq, preds[i], axis=1) > self.get_tr_star())
 
         is_anomaly_majority_vote = np.sum(is_anomaly, axis=1)
