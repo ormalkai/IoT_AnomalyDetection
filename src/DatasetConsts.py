@@ -1,6 +1,7 @@
 # dataset constants
 PROJECT_PATH              = "../"  # TODO change when migrating this notebook
 DATA_PATH                 = PROJECT_PATH + "data/"
+FIGURES_PATH              = PROJECT_PATH + "figures/"
 DANMINI_DOORBELL_DIR      = DATA_PATH + "Danmini_Doorbell/"
 ENNIO_DOORBELL_DIR        = DATA_PATH + "Ennio_Doorbell/"
 ECOBEE_THERMOSTAT_DIR     = DATA_PATH + "Ecobee_Thermostat/"

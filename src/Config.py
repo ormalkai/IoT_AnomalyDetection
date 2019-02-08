@@ -36,6 +36,7 @@ def parse_args(config, args=None):
     parser.add_argument("--test", action="store_true", help="run test")
 
     parser.parse_args(args=args, namespace=config)
+    config.__dict__['is_cli'] = None is not args
     print_config(config)
 
 

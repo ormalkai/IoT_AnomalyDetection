@@ -68,7 +68,8 @@ def main(args=None):
                                                              learning_rate=config.learning_rate,
                                                              epochs=config.epochs,
                                                              batch_size=config.batch_size,
-                                                             train_val_split=config.train_val_split)
+                                                             train_val_split=config.train_val_split,
+                                                             is_cli=config.is_cli)
     elif config.model == MODEL_LSTM_ENC_DEC:
         iot_anomaly_detector = IoTAnomalyDetectorLSTMEncDec(data=train_dataset,
                                                             seq_len=config.seq_len,
@@ -77,7 +78,8 @@ def main(args=None):
                                                             learning_rate=config.learning_rate,
                                                             epochs=config.epochs,
                                                             batch_size=config.batch_size,
-                                                            train_val_split=config.train_val_split)
+                                                            train_val_split=config.train_val_split,
+                                                            is_cli=config.is_cli)
     else:
         raise Exception("Unknown model {}".format(config.model))
 
@@ -87,7 +89,8 @@ def main(args=None):
 
     # Check if not pre-trained model
     print("training start")
-    iot_anomaly_detector.learn_benign_baseline(config.model_filename, config.train)
+    iot_anomaly_detector.learn_benign_baseline(config.model_filename, config.train,
+                                               plot_name=FIGURES_PATH+config.name+".png" if config.is_cli else None)
     print(iot_anomaly_detector)
 
     # if need to detect anomalies -> calc TPR and FPR for each attack
