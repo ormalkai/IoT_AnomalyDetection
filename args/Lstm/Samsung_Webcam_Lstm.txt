@@ -1,0 +1,10 @@
+--name=Samsung_Webcam_Lstm
+--iots=Samsung_Webcam
+--model=LSTMEncDec
+--seq_len=35
+--model_filename=Samsung_Webcam_Lstm
+--learning_rate=0.013
+--epochs=150
+--batch_size=64
+--train
+--test

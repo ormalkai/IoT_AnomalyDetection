@@ -1,0 +1,10 @@
+--name=Ecobee_Thermostat_Lstm
+--iots=Ecobee_Thermostat
+--model=LSTMEncDec
+--seq_len=25
+--model_filename=Ecobee_Thermostat_Lstm
+--learning_rate=0.028
+--epochs=250
+--batch_size=64
+--train
+--test
