@@ -1,0 +1,10 @@
+--name=Ennio_Doorbell_Lstm
+--iots=Ennio_Doorbell
+--model=LSTMEncDec
+--seq_len=25
+--model_filename=Ennio_Doorbell_Lstm
+--learning_rate=0.003
+--epochs=350
+--batch_size=64
+--train
+--test

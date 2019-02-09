@@ -1,0 +1,10 @@
+--name=Danmini_Doorbell_Lstm
+--iots=Danmini_Doorbell
+--model=LSTMEncDec
+--seq_len=85
+--model_filename=Danmini_Doorbell_Lstm
+--learning_rate=0.012
+--epochs=800
+--batch_size=64
+--train
+--test
