@@ -6,6 +6,8 @@ from tqdm import tqdm_notebook, tqdm
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import pickle
 
 
 class IoTAnomalyDetectorBase(ABC):
@@ -66,8 +68,10 @@ class IoTAnomalyDetectorBase(ABC):
     def batch_generator(x_mat, y, batch_size, seq_len):
         if seq_len == 1:
             # Currently no permutation since the chronological order is important!
-            permutation = list(range(x_mat.size()[0]))
-            for i in range(0, x_mat.size()[0], batch_size):
+            # permutation = list(range(x_mat.size()[0]))
+            permutation = list(range(x_mat.shape[0]))
+            # for i in range(0, x_mat.size()[0], batch_size):
+            for i in range(0, x_mat.shape[0], batch_size):
                 indices = permutation[i:i + batch_size]
                 input_x = x_mat[indices]
                 expected_y = y[indices]
@@ -149,12 +153,28 @@ class IoTAnomalyDetectorBase(ABC):
                 epoch_outputs.extend(output.clone().detach().numpy())
         return epoch_loss, epoch_losses, np.asarray(epoch_outputs)
 
-    def fit(self, plot_name):
+    def fit(self, plot_name, temporary_model_filename):
         self.net.train()
-        train_loss_per_epoch = []
-        val_loss_per_epoch = []
+        # Start train from scratch
+        if temporary_model_filename is None or \
+                not os.path.isfile(temporary_model_filename):
+            start_epoch = 0
+            train_loss_per_epoch = []
+            val_loss_per_epoch = []
+        else:
+            try:
+                with open(temporary_model_filename, 'rb') as f:
+                    temporary_model_desc = pickle.load(f)
+            except Exception as e:
+                raise Exception("Can't open file {} - {}".format(temporary_model_filename, e))
+            start_epoch = temporary_model_desc["epoch"]
+            train_loss_per_epoch = temporary_model_desc["train_loss_per_epoch"]
+            val_loss_per_epoch = temporary_model_desc["val_loss_per_epoch"]
+            self.net.set_state_dict(temporary_model_desc["state_dict"])
+            print("Continue Training from epoch {}".format(start_epoch))
+
         curr_tqdm = tqdm if self.is_cli else tqdm_notebook
-        for epoch in curr_tqdm(range(self.epochs), desc='epoch'):
+        for epoch in curr_tqdm(range(start_epoch, self.epochs), desc='epoch'):
             train_running_loss, _, _ = self.run_epoch(self.x_mat_train, self.y_train, is_train=True,
                                                       batch_size=self.batch_size, seq_len=self.seq_len)
             val_running_loss, _, _ = self.run_epoch(self.x_mat_val, self.y_val, is_train=False,
@@ -167,6 +187,17 @@ class IoTAnomalyDetectorBase(ABC):
                 print("Epoch {}, train avg loss {:.6f}, val avg loss {:.6f}".format(epoch, train_running_loss, val_running_loss))
             train_loss_per_epoch.append(train_running_loss)
             val_loss_per_epoch.append(val_running_loss)
+            # Save temporary result
+            if temporary_model_filename is not None:
+                temporary_model_desc = {
+                    "epoch": epoch,
+                    "train_loss_per_epoch": train_loss_per_epoch,
+                    "val_loss_per_epoch": val_loss_per_epoch,
+                    "state_dict": self.net.get_state_dict(),
+                }
+                with open(temporary_model_filename, 'wb') as f:
+                    pickle.dump(temporary_model_desc, f)
+
         # plot learning curve
         # summarize history for loss
         plt.plot(train_loss_per_epoch, linewidth=3)
@@ -193,10 +224,10 @@ class IoTAnomalyDetectorBase(ABC):
     #         x_mat = torch.FloatTensor(x_mat)
     #     return self.net.forward(Variable(x_mat)).cpu().data.numpy()
 
-    def learn_benign_baseline(self, model_filename, is_train, plot_name):
+    def learn_benign_baseline(self, model_filename, is_train, plot_name, temporary_model_filename):
         if is_train:
             # train the model
-            self.fit(plot_name)
+            self.fit(plot_name, temporary_model_filename)
             self.net.save_model_to_file(model_filename)
         else:
             self.load_model_from_file(model_filename)

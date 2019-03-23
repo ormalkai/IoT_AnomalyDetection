@@ -1,0 +1,10 @@
+--name=Danmini_Doorbell_Ennio_Doorbell_Cluster_Lstm
+--iots=Danmini_Doorbell
+--iots=Ennio_Doorbell
+--model_filename=Danmini_Doorbell_Ennio_Doorbell_Cluster_Lstm
+--model=LSTMEncDec
+--learning_rate=0.012
+--epochs=200
+--seq_len=85
+--train
+--test

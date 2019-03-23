@@ -32,6 +32,9 @@ def parse_args(config, args=None):
     parser.add_argument("--train_test_split", default=0.66, type=float, help="Train_test split, train ratio")
     parser.add_argument("--train_val_split", default=0.8, type=float, help="Train_val split, train ratio")
     parser.add_argument("--model_filename", default=None, type=str, help="Model file name to save or load")
+    parser.add_argument("--temporary_model_filename", default=None, type=str, help="Model file name to save or load"
+                                                                                   "During training. In order to"
+                                                                                   "continue training from some epoch")
     parser.add_argument("--train", action="store_true", help="run training")
     parser.add_argument("--test", action="store_true", help="run test")
 

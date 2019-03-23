@@ -1,0 +1,10 @@
+--name=Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm
+--iots=Provision_737_Security_Camera
+--iots=Provision_838_Security_Camera
+--model_filename=Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm
+--model=LSTMEncDec
+--learning_rate=0.02
+--epochs=300
+--seq_len=45
+--train
+--test

@@ -4,7 +4,7 @@
 --seq_len=45
 --model_filename=Provision_838_Security_Camera_Lstm
 --learning_rate=0.008
---epochs=450
+--epochs=250
 --batch_size=64
 --train
 --test

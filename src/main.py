@@ -90,7 +90,8 @@ def main(args=None):
     # Check if not pre-trained model
     print("training start")
     iot_anomaly_detector.learn_benign_baseline(config.model_filename, config.train,
-                                               plot_name=FIGURES_PATH+config.name+".png" if config.is_cli else None)
+                                               plot_name=FIGURES_PATH+config.name+".png" if config.is_cli else None,
+                                               temporary_model_filename=config.temporary_model_filename)
     print(iot_anomaly_detector)
 
     # if need to detect anomalies -> calc TPR and FPR for each attack

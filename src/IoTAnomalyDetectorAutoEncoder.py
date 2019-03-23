@@ -15,17 +15,20 @@ class IoTAnomalyDetectorAutoEncoder(IoTAnomalyDetectorBase):
         if self.tr_star is not None:
             return self.tr_star
         preds = self.predict(self.x_mat_val)
-        mse_per_sample = calc_mse(self.x_mat_val.data.numpy(), preds)
+        # mse_per_sample = calc_mse(self.x_mat_val.data.numpy(), preds)
+        mse_per_sample = calc_mse(self.x_mat_val, preds)
         return mse_per_sample.mean() + mse_per_sample.std()
 
     def get_ws_star(self):
         if self.ws_star is not None:
             return self.ws_star
         preds = self.predict(self.x_mat_val)
-        mse_per_sample = calc_mse(self.x_mat_val.data.numpy(), preds)
+        # mse_per_sample = calc_mse(self.x_mat_val.data.numpy(), preds)
+        mse_per_sample = calc_mse(self.x_mat_val, preds)
         is_anomaly = mse_per_sample > self.get_tr_star()
 
-        for ws in range(1, self.x_mat_val.size()[0]):
+        # for ws in range(1, self.x_mat_val.size()[0]):
+        for ws in range(1, self.x_mat_val.shape[0]):
             has_fp = False
             for i in range(ws, is_anomaly.shape[0]):
                 vote = np.sum(is_anomaly[i-ws+1:i+1])
