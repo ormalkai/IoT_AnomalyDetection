@@ -23,3 +23,9 @@ class IoTAnomalyDetectorNetBase(ABC):
 
     def load_model_from_file(self, model_filename):
         self.model.load_state_dict(torch.load(model_filename))
+
+    def get_state_dict(self):
+        return self.model.state_dict()
+
+    def set_state_dict(self, state_dict):
+        self.model.load_state_dict(state_dict)
