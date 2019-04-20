@@ -10,6 +10,7 @@
 --iots=Simple_Home_1003_Security_Camera
 --model=LSTMEncDec
 --model_filename=All_Cluster_Lstm
+--temporary_model_filename=All_Cluster_Lstm_temporary
 --seq_len=85
 --learning_rate=0.012
 --epochs=200

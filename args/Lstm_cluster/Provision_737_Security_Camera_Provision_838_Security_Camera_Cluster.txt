@@ -2,6 +2,7 @@
 --iots=Provision_737_Security_Camera
 --iots=Provision_838_Security_Camera
 --model_filename=Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm
+--temporary_model_filename=Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm_temporary
 --model=LSTMEncDec
 --learning_rate=0.02
 --epochs=300

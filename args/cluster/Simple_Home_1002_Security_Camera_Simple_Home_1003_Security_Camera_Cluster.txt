@@ -3,6 +3,6 @@
 --iots=Simple_Home_1003_Security_Camera
 --model_filename=Simple_Home_1002_Security_Camera_Simple_Home_1003_Security_Camera_Cluster
 --learning_rate=0.01
---epochs=1
+--epochs=325
 --train
 --test

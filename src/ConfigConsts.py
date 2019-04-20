@@ -21,3 +21,4 @@ SIMPLE_HOME_1002_SECURITY_CAM = "Simple_Home_1002_Security_Camera"
 SIMPLE_HOME_1003_SECURITY_CAM = "Simple_Home_1003_Security_Camera"
 
 MODELS_DIR = "models/"
+MODELS_DIR_TMP = MODELS_DIR + "tmp/"

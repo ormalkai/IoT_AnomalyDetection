@@ -14,7 +14,6 @@ class IoTAnomalyDetectorBase(ABC):
     def __init__(self, data, net, seq_len, loss, optimizer, learning_rate, epochs, batch_size, train_val_split, is_cli,
                  normalize="min-max"):
         """
-        TODO ORM doc
         :param data:
         :param net:
         :param learning_rate:
