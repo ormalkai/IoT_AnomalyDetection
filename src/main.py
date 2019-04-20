@@ -12,7 +12,6 @@ import os
 
 def build_train_dataset(dataset):
     """
-    TODO doc
     :param dataset:
     :return:
     """
@@ -86,6 +85,9 @@ def main(args=None):
     # handle model file name
     if config.model_filename is not None:
         config.model_filename = PROJECT_PATH + MODELS_DIR + config.model_filename
+
+    if config.temporary_model_filename is not None:
+        config.temporary_model_filename = PROJECT_PATH + MODELS_DIR_TMP + config.temporary_model_filename
 
     # Check if not pre-trained model
     print("training start")
