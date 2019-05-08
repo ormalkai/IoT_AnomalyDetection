@@ -1,0 +1,7 @@
+--name=Simple_Home_1002_Security_Camera_Baseline
+--iots=Simple_Home_1002_Security_Camera
+--learning_rate=0.017
+--epochs=230
+--train
+--test_10_perc
+--test

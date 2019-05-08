@@ -1,0 +1,10 @@
+--name=Simple_Home_1003_Security_Camera_Lstm
+--iots=Simple_Home_1003_Security_Camera
+--model=LSTMEncDec
+--seq_len=25
+--model_filename=Simple_Home_1003_Security_Camera_Lstm
+--learning_rate=0.006
+--epochs=500
+--batch_size=64
+--test_10_perc
+--test

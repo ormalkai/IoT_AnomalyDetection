@@ -23,7 +23,7 @@ def build_train_dataset(dataset):
 
 
 def track_model(config, post_training_parameters, df_results):
-    tracking_file = PROJECT_PATH + "tracking/" + "tracking_models2.csv"  # TODO ORM take from config
+    tracking_file = PROJECT_PATH + "tracking/" + "tracking_models_squeeze.csv"  # TODO ORM take from config
     old_tracking = pd.DataFrame()
     # if file exists load dataframe
     if os.path.isfile(tracking_file):
@@ -55,7 +55,7 @@ def main(args=None):
     config = Config()
     parse_args(config, args)
     # Load data
-    dataset = NBaIoTDatasetLoader.load_data(config.iots, config.train_test_split)
+    dataset = NBaIoTDatasetLoader.load_data(config.iots, config.train_test_split, config.test_10_perc)
     # Build train dataset
     train_dataset = build_train_dataset(dataset)
     # Create model

@@ -1,0 +1,8 @@
+--name=Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster
+--iots=Provision_737_Security_Camera
+--iots=Provision_838_Security_Camera
+--model_filename=Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster
+--learning_rate=0.02
+--epochs=350
+--test_10_perc
+--test

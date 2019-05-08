@@ -1,0 +1,10 @@
+--name=Philips_Baby_Monitor_Lstm
+--iots=Philips_Baby_Monitor
+--model=LSTMEncDec
+--seq_len=65
+--model_filename=Philips_Baby_Monitor_Lstm
+--learning_rate=0.016
+--epochs=100
+--batch_size=64
+--test_10_perc
+--test
