@@ -1,0 +1,7 @@
+--name=Ecobee_Thermostat_Baseline
+--iots=Ecobee_Thermostat
+--learning_rate=0.028
+--epochs=250
+--train
+--test_10_perc
+--test

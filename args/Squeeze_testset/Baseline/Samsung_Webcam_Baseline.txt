@@ -1,0 +1,7 @@
+--name=Samsung_Webcam_Baseline
+--iots=Samsung_Webcam
+--learning_rate=0.013
+--epochs=150
+--train
+--test_10_perc
+--test

@@ -1,0 +1,7 @@
+--name=Provision_737_Security_Camera_Baseline
+--iots=Provision_737_Security_Camera
+--learning_rate=0.026
+--epochs=300
+--train
+--test_10_perc
+--test

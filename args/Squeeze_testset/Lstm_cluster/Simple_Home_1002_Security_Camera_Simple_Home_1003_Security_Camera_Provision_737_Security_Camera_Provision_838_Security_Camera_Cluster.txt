@@ -1,0 +1,13 @@
+--name=Simple_Home_1002_Security_Camera_Simple_Home_1003_Security_Camera_Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm
+--iots=Simple_Home_1002_Security_Camera
+--iots=Simple_Home_1003_Security_Camera
+--iots=Provision_737_Security_Camera
+--iots=Provision_838_Security_Camera
+--model_filename=Simple_Home_1002_Security_Camera_Simple_Home_1003_Security_Camera_Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm
+--temporary_model_filename=Simple_Home_1002_Security_Camera_Simple_Home_1003_Security_Camera_Provision_737_Security_Camera_Provision_838_Security_Camera_Cluster_Lstm_temporary
+--model=LSTMEncDec
+--seq_len=45
+--learning_rate=0.01
+--epochs=300
+--test_10_perc
+--test

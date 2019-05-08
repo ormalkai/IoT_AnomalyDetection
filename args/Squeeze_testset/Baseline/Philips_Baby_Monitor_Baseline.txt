@@ -1,0 +1,7 @@
+--name=Philips_Baby_Monitor_Baseline
+--iots=Philips_Baby_Monitor
+--learning_rate=0.016
+--epochs=100
+--train
+--test_10_perc
+--test

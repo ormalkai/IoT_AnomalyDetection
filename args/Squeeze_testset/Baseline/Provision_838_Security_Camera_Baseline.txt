@@ -1,0 +1,7 @@
+--name=Provision_838_Security_Camera_Baseline
+--iots=Provision_838_Security_Camera
+--learning_rate=0.008
+--epochs=450
+--train
+--test_10_perc
+--test

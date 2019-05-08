@@ -37,6 +37,7 @@ def parse_args(config, args=None):
                                                                                    "continue training from some epoch")
     parser.add_argument("--train", action="store_true", help="run training")
     parser.add_argument("--test", action="store_true", help="run test")
+    parser.add_argument("--test_10_perc", action="store_true", help="Keep only 10 perc of the test set")
 
     parser.parse_args(args=args, namespace=config)
     config.__dict__['is_cli'] = None is args

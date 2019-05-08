@@ -1,0 +1,8 @@
+--name=Simple_Home_1002_Security_Camera_Simple_Home_1003_Security_Camera_Cluster
+--iots=Simple_Home_1002_Security_Camera
+--iots=Simple_Home_1003_Security_Camera
+--model_filename=Simple_Home_1002_Security_Camera_Simple_Home_1003_Security_Camera_Cluster
+--learning_rate=0.01
+--epochs=325
+--test_10_perc
+--test
